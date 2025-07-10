@@ -1,0 +1,141 @@
+
+    
+    <style>
+        /* Custom scrollbar hiding for webkit (Chrome, Safari) and Firefox */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+    </style>
+
+
+
+
+    <!-- Reels Gallery Container: Increased width and set a max-width for responsiveness -->
+    <div class="relative w-full max-w-xxl mx-auto">
+        <!-- The container that provides the overflow hidden effect -->
+        <div class="overflow-hidden rounded-2xl">
+            <!-- The scrollable wrapper for the images -->
+            <div id="reelsWrapper" class="flex overflow-x-auto snap-x snap-mandatory scroll-smooth no-scrollbar">
+                
+                <!-- Reel Item 1: Changed width to full and height to be responsive (70% of viewport height) -->
+                <div class="snap-center flex-shrink-0 w-full h-[70vh] rounded-2xl overflow-hidden shadow-lg shadow-cyan-500/20">
+                    <img src="https://placehold.co/600x900/0D1117/FFFFFF?text=City+Night" alt="City at night" class="w-full h-full object-cover">
+                </div>
+
+                <!-- Reel Item 2 -->
+                <div class="snap-center flex-shrink-0 w-full h-[70vh] rounded-2xl overflow-hidden shadow-lg shadow-purple-500/20">
+                    <img src="https://placehold.co/600x900/1A1A2E/FFFFFF?text=Forest" alt="Misty forest" class="w-full h-full object-cover">
+                </div>
+
+                <!-- Reel Item 3 -->
+                <div class="snap-center flex-shrink-0 w-full h-[70vh] rounded-2xl overflow-hidden shadow-lg shadow-pink-500/20">
+                    <img src="https://placehold.co/600x900/2E1A2A/FFFFFF?text=Mountains" alt="Mountain range" class="w-full h-full object-cover">
+                </div>
+
+                <!-- Reel Item 4 -->
+                <div class="snap-center flex-shrink-0 w-full h-[70vh] rounded-2xl overflow-hidden shadow-lg shadow-blue-500/20">
+                    <img src="https://placehold.co/600x900/16213E/FFFFFF?text=Ocean" alt="Ocean waves" class="w-full h-full object-cover">
+                </div>
+
+                <!-- Reel Item 5 -->
+                <div class="snap-center flex-shrink-0 w-full h-[70vh] rounded-2xl overflow-hidden shadow-lg shadow-green-500/20">
+                    <img src="https://placehold.co/600x900/0F3D3E/FFFFFF?text=Desert" alt="Sandy desert" class="w-full h-full object-cover">
+                </div>
+
+                <!-- Reel Item 6 -->
+                <div class="snap-center flex-shrink-0 w-full h-[70vh] rounded-2xl overflow-hidden shadow-lg shadow-yellow-500/20">
+                    <img src="https://placehold.co/600x900/3E2C16/FFFFFF?text=Architecture" alt="Modern architecture" class="w-full h-full object-cover">
+                </div>
+                 <!-- Reel Item 7 -->
+                <div class="snap-center flex-shrink-0 w-full h-[70vh] rounded-2xl overflow-hidden shadow-lg shadow-red-500/20">
+                    <img src="https://placehold.co/600x900/3E1616/FFFFFF?text=Abstract" alt="Abstract art" class="w-full h-full object-cover">
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Previous Button: Moved further from the edge for the larger size -->
+        <button id="prevButton" class="absolute left-4 top-1/2 -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm p-3 rounded-full text-white hover:bg-white/30 transition-all duration-300 focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+
+        <!-- Next Button: Moved further from the edge for the larger size -->
+        <button id="nextButton" class="absolute right-4 top-1/2 -translate-y-1/2 z-10 bg-white/20 backdrop-blur-sm p-3 rounded-full text-white hover:bg-white/30 transition-all duration-300 focus:outline-none">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+    </div>
+	
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const wrapper = document.getElementById('reelsWrapper');
+            const prevButton = document.getElementById('prevButton');
+            const nextButton = document.getElementById('nextButton');
+
+            if (!wrapper || !prevButton || !nextButton) {
+                console.error("One or more elements for the reels gallery were not found.");
+                return;
+            }
+
+            // This function scrolls to a specific item index
+            const scrollToItem = (index) => {
+                const items = wrapper.children;
+                // Ensure the index is within the valid range
+                if (index >= 0 && index < items.length) {
+                    items[index].scrollIntoView({
+                        behavior: 'smooth',
+                        inline: 'start', // Aligns the item to the start of the container
+                        block: 'nearest'
+                    });
+                }
+            };
+            
+            // Get the width of a single item dynamically. Since items are w-full, this is the wrapper's width.
+            const getItemWidth = () => wrapper.clientWidth;
+
+            nextButton.addEventListener('click', () => {
+                const itemWidth = getItemWidth();
+                // Calculate current index and determine the next one
+                const currentIndex = Math.round(wrapper.scrollLeft / itemWidth);
+                const nextIndex = currentIndex + 1;
+                scrollToItem(nextIndex);
+            });
+
+            prevButton.addEventListener('click', () => {
+                const itemWidth = getItemWidth();
+                // Calculate current index and determine the previous one
+                const currentIndex = Math.round(wrapper.scrollLeft / itemWidth);
+                const prevIndex = currentIndex - 1;
+                scrollToItem(prevIndex);
+            });
+            
+            // This function hides or shows the nav buttons depending on the scroll position
+            const handleScrollButtons = () => {
+                // A small tolerance to handle floating point inaccuracies during scroll
+                const tolerance = 5;
+                const maxScrollLeft = wrapper.scrollWidth - wrapper.clientWidth;
+                
+                // Hide prev button at the start
+                prevButton.style.display = wrapper.scrollLeft <= tolerance ? 'none' : 'block';
+                // Hide next button at the end
+                nextButton.style.display = wrapper.scrollLeft >= maxScrollLeft - tolerance ? 'none' : 'block';
+            };
+
+            // Use a timeout to let the browser render, then set up the event listener and initial state
+            setTimeout(() => {
+                wrapper.addEventListener('scroll', handleScrollButtons);
+                handleScrollButtons(); // Initial check
+            }, 100);
+        });
+    </script>
+
+
